@@ -40,6 +40,8 @@ const loadAllTrees = () => {
         });
 };
 
+let cart = []; // Array to store cart items
+
 const displayTrees = (plants) => {
     const cardContainer = document.querySelector('.card-container');
     cardContainer.innerHTML = '';
@@ -58,28 +60,23 @@ const displayTrees = (plants) => {
             </div>
             <button class="card-button btn btn-accent w-full bg-[#15803D] p-3 rounded-[25px] text-xl text-white">Add to Cart</button>
         `;
-        // Add click event to show modal
-        card.addEventListener('click', () => showPlantModal(plant));
+
+        card.addEventListener('click', (e) => {
+            // Prevent modal on button click
+            if (!e.target.classList.contains('card-button')) {
+                showPlantModal(plant);
+            }
+        });
+        
+        card.querySelector('.card-button').addEventListener('click', (e) => {
+            e.stopPropagation();
+            addToCart(plant);
+        });
         cardContainer.appendChild(card);
     });
 };
 loadAllTrees();
 
-// Modal HTML (add to the end of your <body> in index.html)
-/*
-<div id="plant-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-    <div class="bg-white rounded-lg p-8 max-w-lg w-full relative">
-        <button id="close-modal" class="absolute top-2 right-2 text-2xl font-bold">&times;</button>
-        <img id="modal-image" src="" alt="" class="h-60 w-60 mx-auto rounded-lg mb-4">
-        <h3 id="modal-title" class="text-2xl font-bold mb-2"></h3>
-        <p id="modal-description" class="text-gray-600 mb-2"></p>
-        <div class="flex items-center justify-between mb-2">
-            <span id="modal-category" class="bg-[#DCFCE7] rounded-[20px] p-2 font-semibold"></span>
-            <span id="modal-price" class="font-bold"></span>
-        </div>
-    </div>
-</div>
-*/
 
 // Show modal function
 function showPlantModal(plant) {
@@ -102,5 +99,61 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// Add to cart function
+function addToCart(plant) {
+    // Check if plant already in cart
+    const existing = cart.find(item => item.id === plant.id);
+    if (existing) {
+        existing.quantity += 1;
+    } else {
+        cart.push({ id: plant.id, name: plant.name, price: plant.price, quantity: 1 });
+    }
+    updateCartSidebar();
+}
+
+// Update cart sidebar
+function updateCartSidebar() {
+    const cartSidebar = document.querySelector('.cart-list-sidebar');
+    // Remove old cart items and total price
+    cartSidebar.querySelectorAll('.cart-item').forEach(item => item.remove());
+    const oldTotal = cartSidebar.querySelector('.total-price');
+    if (oldTotal) oldTotal.remove();
+
+    // Add cart items
+    cart.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'cart-item flex items-center justify-between gap-3 p-3 bg-[#DCFCE7] rounded-lg mt-5';
+        div.innerHTML = `
+            <div>
+                <p class="text-xl text-gray-600 font-semibold">${item.name}</p>
+                <div class="flex items-center gap-1">
+                    <p class="price text-gray-600">৳${item.price}</p>
+                    <p class="text-gray-600">x</p>
+                    <p class="units text-gray-600">${item.quantity}</p>
+                </div>
+            </div>
+            <div class="cross cursor-pointer"><i class="fa-solid fa-xmark"></i></div>
+        `;
+        // Remove item event
+        div.querySelector('.cross').addEventListener('click', () => {
+            cart = cart.filter(c => c.id !== item.id);
+            updateCartSidebar();
+        });
+        cartSidebar.appendChild(div);
+    });
+
+    // Add total price if cart not empty
+    if (cart.length > 0) {
+        const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        const totalDiv = document.createElement('div');
+        totalDiv.className = 'total-price flex items-center justify-between mt-10 p-3 border-t-2 border-gray-300';
+        totalDiv.innerHTML = `
+            <h3 class="text-gray-600 font-semibold">Total Price</h3>
+            <h3 class="text-gray-600 font-semibold">৳${total}</h3>
+        `;
+        cartSidebar.appendChild(totalDiv);
+    }
+}
 
 
