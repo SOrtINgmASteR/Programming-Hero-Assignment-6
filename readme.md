@@ -64,7 +64,7 @@ console.log("My name is " + name + " and I am " + age + " years old.");
 // ES6 Template Literal concatenation
 console.log(`My name is ${name} and I am ${age} years old.`);
 
-//ES6 Template Literal Multiline strings
+// ES6 Template Literal Multiline strings
 const msg = `Hello,
 This is a multiline
 string!`;
@@ -78,7 +78,7 @@ console.log(msg)
 This project is part of Programming Hero's web development course assignments. The main objectives include:  
 - Making a responsive page from figma design.
 - Using semantic HTML & Tailwind CSS elements.
-- The page must be responsive for devices with smaller width
+- The page must be responsive for devices with smaller width.
 - Using DOM (Document Object Model) to implement some dynamic behavior to the page.
 - Fetch data from API & Load it as JSON.
 - Then load the data in the HTML page.
