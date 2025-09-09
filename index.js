@@ -41,6 +41,13 @@ const displayCategories = (categories) => {
         li.textContent = category.category_name;
         li.id = `category-${category.id}`;
         li.addEventListener('click', () => {
+            
+            categorySidebar.querySelectorAll('li').forEach(item => {
+                item.classList.remove('bg-[#15803D]', 'text-white');
+            });
+
+            li.classList.add('bg-[#15803D]', 'text-white');
+
             const filteredPlants = allPlants.filter(plant => plant.category === category.category_name);
             displayTrees(filteredPlants);
         });
