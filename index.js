@@ -45,7 +45,7 @@ const displayTrees = (plants) => {
     cardContainer.innerHTML = '';
     plants.forEach(plant => {
         const card = document.createElement('div');
-        card.className = 'card bg-[#FFFFFF] p-4 rounded-lg flex flex-col gap-3 max-w-[350px]';
+        card.className = 'card bg-[#FFFFFF] p-4 rounded-lg flex flex-col gap-3 max-w-[350px] cursor-pointer';
         card.id = `plant-${plant.id}`;
 
         card.innerHTML = `
@@ -58,8 +58,49 @@ const displayTrees = (plants) => {
             </div>
             <button class="card-button btn btn-accent w-full bg-[#15803D] p-3 rounded-[25px] text-xl text-white">Add to Cart</button>
         `;
+        // Add click event to show modal
+        card.addEventListener('click', () => showPlantModal(plant));
         cardContainer.appendChild(card);
     });
 };
-
 loadAllTrees();
+
+// Modal HTML (add to the end of your <body> in index.html)
+/*
+<div id="plant-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg p-8 max-w-lg w-full relative">
+        <button id="close-modal" class="absolute top-2 right-2 text-2xl font-bold">&times;</button>
+        <img id="modal-image" src="" alt="" class="h-60 w-60 mx-auto rounded-lg mb-4">
+        <h3 id="modal-title" class="text-2xl font-bold mb-2"></h3>
+        <p id="modal-description" class="text-gray-600 mb-2"></p>
+        <div class="flex items-center justify-between mb-2">
+            <span id="modal-category" class="bg-[#DCFCE7] rounded-[20px] p-2 font-semibold"></span>
+            <span id="modal-price" class="font-bold"></span>
+        </div>
+    </div>
+</div>
+*/
+
+// Show modal function
+function showPlantModal(plant) {
+    const modal = document.getElementById('plant-modal');
+    document.getElementById('modal-image').src = plant.image;
+    document.getElementById('modal-title').textContent = plant.name;
+    document.getElementById('modal-description').textContent = plant.description;
+    document.getElementById('modal-category').textContent = plant.category;
+    document.getElementById('modal-price').textContent = `৳${plant.price}`;
+    modal.classList.remove('hidden');
+}
+
+// Close modal event
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('plant-modal');
+    const closeBtn = document.getElementById('close-modal');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
+    }
+});
+
+
