@@ -2,8 +2,29 @@ console.log('JavaScript is Connected');
 
 let allPlants = [];
 
-// Load and display categories dynamically
+// Show spinner utility
+function showSpinner(containerSelector) {
+    const container = document.querySelector(containerSelector);
+    if (container) {
+        container.innerHTML = `
+            <div class="flex justify-center items-center w-full h-40">
+                <span class="loading loading-dots loading-lg text-[#15803D]"></span>
+            </div>
+        `;
+    }
+}
+
+// Hide spinner utility (just clears container, actual data will replace it)
+function hideSpinner(containerSelector) {
+    const container = document.querySelector(containerSelector);
+    if (container) {
+        container.innerHTML = '';
+    }
+}
+
+// Update loadCategories to show spinner
 const loadCategories = () => {
+    showSpinner('.category-sidebar ul');
     const url = 'https://openapi.programming-hero.com/api/categories';
     fetch(url)
         .then(res => res.json())
@@ -11,6 +32,7 @@ const loadCategories = () => {
 };
 
 const displayCategories = (categories) => {
+    hideSpinner('.category-sidebar ul');
     const categorySidebar = document.querySelector('.category-sidebar ul');
     categorySidebar.innerHTML = '';
     categories.forEach(category => {
@@ -29,8 +51,9 @@ const displayCategories = (categories) => {
 loadCategories();
 
 
-// Load and display cards of all categories trees
+// Update loadAllTrees to show spinner
 const loadAllTrees = () => {
+    showSpinner('.card-container');
     const url = 'https://openapi.programming-hero.com/api/plants';
     fetch(url)
         .then(res => res.json())
@@ -40,9 +63,10 @@ const loadAllTrees = () => {
         });
 };
 
-let cart = []; // Array to store cart items
+let cart = []; 
 
 const displayTrees = (plants) => {
+    hideSpinner('.card-container');
     const cardContainer = document.querySelector('.card-container');
     cardContainer.innerHTML = '';
     plants.forEach(plant => {
@@ -62,7 +86,6 @@ const displayTrees = (plants) => {
         `;
 
         card.addEventListener('click', (e) => {
-            // Prevent modal on button click
             if (!e.target.classList.contains('card-button')) {
                 showPlantModal(plant);
             }
@@ -102,7 +125,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Add to cart function
 function addToCart(plant) {
-    // Check if plant already in cart
     const existing = cart.find(item => item.id === plant.id);
     if (existing) {
         existing.quantity += 1;
@@ -115,12 +137,11 @@ function addToCart(plant) {
 // Update cart sidebar
 function updateCartSidebar() {
     const cartSidebar = document.querySelector('.cart-list-sidebar');
-    // Remove old cart items and total price
+
     cartSidebar.querySelectorAll('.cart-item').forEach(item => item.remove());
     const oldTotal = cartSidebar.querySelector('.total-price');
     if (oldTotal) oldTotal.remove();
 
-    // Add cart items
     cart.forEach(item => {
         const div = document.createElement('div');
         div.className = 'cart-item flex items-center justify-between gap-3 p-3 bg-[#DCFCE7] rounded-lg mt-5';
@@ -135,7 +156,7 @@ function updateCartSidebar() {
             </div>
             <div class="cross cursor-pointer"><i class="fa-solid fa-xmark"></i></div>
         `;
-        // Remove item event
+
         div.querySelector('.cross').addEventListener('click', () => {
             cart = cart.filter(c => c.id !== item.id);
             updateCartSidebar();
@@ -143,7 +164,6 @@ function updateCartSidebar() {
         cartSidebar.appendChild(div);
     });
 
-    // Add total price if cart not empty
     if (cart.length > 0) {
         const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
         const totalDiv = document.createElement('div');
